@@ -142,14 +142,14 @@ for i in range(9999999):
     if download_all_activies and (filename[-3:]=="fit" and download_TCX_version_for_FIT and (not activity_file_exists(fit_tcx_folder,activityId))):
         print("---> Downloading TCX version")
         download = gc.download_activity(activityId,DOWNLOAD_TCX)
-        filename = fit_tcx_folder + "/" + filename_body + ".tcx"
-        file = open(filename, 'wb')
+        TCX_filename = fit_tcx_folder + "/" + filename_body + ".tcx"
+        file = open(TCX_filename, 'wb')
         file.write(download)
         file.close()
 
     # if a FIT file was just downloaded, convert it to a separate JSON file too
-    if filename[-3:]=="fit" and convert_fit_to_json:
-        print("---> Converting to JSON")
+    if convert_fit_to_json and filename[-3:]=="fit":
+        print("---> Converting FIT to JSON")
         converted_filename = fit_json_folder + "/" + os.path.basename(filename)[:-3] + "json"
         cmd_str = "fitjson --pretty -o \"" + converted_filename + "\" \"" + filename + "\""
         subprocess.run(cmd_str, shell=True)

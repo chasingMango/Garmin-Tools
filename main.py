@@ -18,7 +18,7 @@ from common import *
 DOWNLOAD_ORIGINAL = Garmin.ActivityDownloadFormat.ORIGINAL
 DOWNLOAD_TCX = Garmin.ActivityDownloadFormat.TCX
 
-TESTING = True
+TESTING = False
 
 settings_filename = "settings.ini"
 

@@ -1,5 +1,6 @@
 from garmin_fit_sdk import Decoder, Stream
-import xml.etree.cElementTree as ET
+#import xml.etree.cElementTree as ET
+import lxml.etree as ET
 
 from os.path import exists
 
@@ -39,6 +40,7 @@ def transpose_FIT(fit_stream, transposed_starting_lat, transposed_starting_lon):
 
 def transpose_TCX(TCX_filename, transposed_starting_lat, transposed_starting_lon, save_file_overwrite=False,new_filename=None,return_format="xml"):
 
+    #Use lxml to avoid writing namespaces to tags, which TCX does not do
     tree = ET.parse(TCX_filename)
     root = tree.getroot()
 

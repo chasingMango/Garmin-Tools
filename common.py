@@ -97,9 +97,13 @@ def FIT_to_list(fit_stream):
 
     return coords
 
-def TCX_to_list(TCX_filename):
-    tree = ET.parse(TCX_filename)
-    root = tree.getroot()
+def TCX_to_list(TCX_tree):
+
+    #if the tree is passed as a filename, load the TCX file
+    if exists(TCX_tree):
+        TCX_tree = ET.parse(TCX_tree)
+
+    root = TCX_tree.getroot()
 
     coords = []
 

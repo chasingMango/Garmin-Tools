@@ -1,8 +1,11 @@
+from garmin_fit_sdk import Decoder, Stream
 import datetime
 import time
 import os
 import glob
 import json
+import xml.etree.cElementTree as ET
+from os.path import exists
 
 def get_yes_no(prompt=None, repeat_until_valid_response=True):
     default_prompt = "(y)es/(n)o: "
@@ -72,3 +75,41 @@ def get_most_recent_activity_startTime(json_metadata_folder):
 
 def get_activity_start_datetime(activity):
     return datetime.datetime.strptime(activity["startTimeLocal"],'%Y-%m-%d %H:%M:%S')
+
+def FIT_to_list(fit_stream):
+    # if fit_stream is a string, check if it is a fit file and load a stream from that file
+    if type(fit_stream == "str"):
+        if exists(fit_stream):
+            fit_stream = Stream.from_file(fit_stream)
+        else:
+            return None
+
+    semicircle_conversion = 180 / pow(2, 31)
+    coords = []
+    decoder = Decoder(fit_stream)
+    messages, errors = decoder.read()
+
+    for message in messages["record_mesgs"]:
+        lat = message["position_lat"] * semicircle_conversion
+        lon = message["position_long"] * semicircle_conversion
+        alt = message["enhanced_altitude"]
+        coords.append([lon,lat,alt])
+
+    return coords
+
+def TCX_to_list(TCX_filename):
+    tree = ET.parse(TCX_filename)
+    root = tree.getroot()
+
+    coords = []
+
+    for trackpoint in root.iter("{http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2}Trackpoint"):
+        position = trackpoint.find('{http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2}Position')
+        lat = float(position.find('{http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2}LatitudeDegrees').text)
+        lon = float(position.find('{http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2}LongitudeDegrees').text)
+        alt = float(trackpoint.find('{http://www.garmin.com/xmlschemas/TrainingCenterDatabase/v2}AltitudeMeters').text)
+        coords.append([lon,lat,alt])
+
+    return coords
+
+

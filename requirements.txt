@@ -2,4 +2,4 @@ cloudscraper
 garminconnect
 fitdecode
 requests
-fitdecode
+garmin_fit_sdk
